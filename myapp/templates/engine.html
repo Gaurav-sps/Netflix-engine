@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NetFlix Recommendation Api</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='uploads/thibault-penin-AWOl7qqsffM-unsplash (1).jpg') }}"); /* Replace with the URL of your image */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #content {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: 50px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Your One Stop Recommendation Engine</h1>
+        
+        <!-- <button onclick="uploadFile()">Upload a File</button>
+        <p id="message1"></p>
+        
+        <button onclick="callAPI(1)">Button 1</button>
+        <p id="message2"></p>
+        
+        <button onclick="callAPI(2)">Button 2</button>
+        <p id="message3"></p>
+        
+        <button onclick="callAPI(3)">Button 3</button>
+        <p id="message4"></p> -->
+        
+        <button onclick="callAPI(4)">Enter Movie Name</button>
+        <input type="text" id="movieName">
+        <p id="message5"></p>
+    </div>
+
+
+</body>
+</html>
+
+
+    <script>
+        function callAPI(buttonNumber) {
+            const apiUrls = [
+                "", // URL for the first button's API
+                "API_URL_1",
+                "API_URL_2",
+                "API_URL_3",
+                "http://127.0.0.1:5000/api" // URL for Enter Movie Name button's API
+            ];
+
+            const messageIds = [
+                "message1",
+                "message2",
+                "message3",
+                "message4",
+                "message5"
+            ];
+
+            const apiUrl = apiUrls[buttonNumber];
+            const messageId = messageIds[buttonNumber];
+
+            if (apiUrl) {
+                let requestData = {};
+
+                if (buttonNumber === 4) {
+                    const movieName = document.getElementById('movieName').value;
+                    if (!movieName) {
+                        document.getElementById(messageId).innerText = "Please enter a movie name.";
+                        return;
+                    }
+                    requestData = { title: movieName };
+                }
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result && data.result.length > 0) {
+                        const movieInfo = data.result.map(movie => `${movie.title} (Confidence: ${movie.confidence})`).join('\n');
+                        document.getElementById(messageId).innerText = "Movie Info:\n" + movieInfo;
+                    } else {
+                        document.getElementById(messageId).innerText = "No movie info found.";
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById(messageId).innerText = "Error occurred while calling the API.";
+                });
+            } else {
+                document.getElementById(messageId).innerText = "API URL not configured.";
+            }
+        }
+
+        function uploadFile() {
+            const message1Element = document.getElementById("message1");
+            const fileInput = document.createElement("input");
+            fileInput.type = "file";
+            fileInput.accept = ".csv"; // Specify the accepted file type
+            fileInput.addEventListener("change", event => {
+                const selectedFile = event.target.files[0];
+                if (selectedFile) {
+                    message1Element.innerText = "File selected: " + selectedFile.name;
+                } else {
+                    message1Element.innerText = "No file selected.";
+                }
+            });
+            fileInput.click();
+        }
+    </script>
+</body>
+</html>
